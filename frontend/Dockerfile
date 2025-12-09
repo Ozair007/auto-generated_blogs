@@ -16,8 +16,8 @@ COPY src ./src
 COPY index.html ./
 COPY public ./public
 
-# Build argument for API URL
-ENV VITE_API_URL=$VITE_API_URL
+# ENV variables
+COPY .env .env
 
 # Build the application
 RUN npm run build
