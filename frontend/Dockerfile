@@ -16,9 +16,6 @@ COPY src ./src
 COPY index.html ./
 COPY public ./public
 
-# ENV variables
-COPY .env .env
-
 # Build the application
 RUN npm run build
 
