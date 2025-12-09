@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: blog-postgres
+    environment:
+      POSTGRES_DB: ${PROD_DB_NAME}
+      POSTGRES_USER: ${PROD_DB_USER}
+      POSTGRES_PASSWORD: ${PROD_DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - blog-network
+
+  backend:
+    image: ${ECR_REGISTRY}/${ECR_REPOSITORY_BACKEND}:latest
+    container_name: blog-backend
+    environment:
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${PROD_DB_NAME}
+      DB_USER: ${PROD_DB_USER}
+      DB_PASSWORD: ${PROD_DB_PASSWORD}
+      HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY}
+      AI_MODEL: ${AI_MODEL}
+      GENERATE_ON_STARTUP: "false"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - blog-network
+
+  frontend:
+    image: ${ECR_REGISTRY}/${ECR_REPOSITORY_FRONTEND}:latest
+    container_name: blog-frontend
+    environment:
+      VITE_API_URL: http://${EC2_PUBLIC_IP}:3000/api
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - blog-network
+
+volumes:
+  postgres_data:
+
+networks:
+  blog-network:
+    driver: bridge
