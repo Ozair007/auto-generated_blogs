@@ -1,4 +1,4 @@
-# Auto-Generated Blog - Full-Stack Application
+# Blogs Daily - Full-Stack Application
 
 A full-stack blog application that automatically generates articles using AI, built with React, Node.js, PostgreSQL, Docker, and deployed on AWS.
 
